@@ -47,7 +47,7 @@ Before running this application, make sure you have:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/IsAmitprajapati/BlinkIt-Clone-Full-Stack-Ecommerce.git
+git clone https://github.com/Sujal0786/BlinkiT-clone.git
 cd BlinkIt-Clone-Full-Stack-Ecommerce
 ```
 
