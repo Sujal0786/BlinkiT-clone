@@ -1,0 +1,115 @@
+graph TB
+    %% Frontend Layer
+    subgraph "Frontend Layer"
+        WEB[Web Client<br/>React App]
+        MOBILE[Mobile App<br/>React Native]
+        ADMIN[Admin Panel<br/>React Dashboard]
+    end
+
+    %% API Gateway
+    subgraph "API Gateway Layer"
+        NGINX[NGINX<br/>Load Balancer]
+        GATEWAY[API Gateway<br/>Express.js]
+        RATE[Rate Limiter<br/>Redis]
+    end
+
+    %% Microservices
+    subgraph "Microservices Layer"
+        AUTH[Auth Service<br/>Node.js + JWT]
+        PRODUCT[Product Service<br/>Node.js + Search]
+        CART[Cart Service<br/>Node.js + Cache]
+        INVENTORY[Inventory Service<br/>Node.js + Locks]
+        ORDER[Order Service<br/>Node.js + Events]
+        PAYMENT[Payment Service<br/>Node.js + Gateway]
+        NOTIFICATION[Notification Service<br/>Node.js + Queue]
+        DELIVERY[Delivery Service<br/>Node.js + Maps]
+    end
+
+    %% Data Layer
+    subgraph "Data Layer"
+        MONGO[(MongoDB<br/>Primary Database)]
+        REDIS[(Redis<br/>Cache & Sessions)]
+        S3[(AWS S3<br/>File Storage)]
+        ELASTIC[(Elasticsearch<br/>Search Engine)]
+    end
+
+    %% Message Queue
+    subgraph "Message Queue"
+        QUEUE[Redis/RabbitMQ<br/>Event Bus]
+    end
+
+    %% External Services
+    subgraph "External Services"
+        RAZORPAY[Razorpay<br/>Payment Gateway]
+        MAPS[Google Maps<br/>Location API]
+        SMS[SMS Gateway<br/>Notifications]
+        EMAIL[Email Service<br/>SMTP]
+    end
+
+    %% Connections
+    WEB --> NGINX
+    MOBILE --> NGINX
+    ADMIN --> NGINX
+    
+    NGINX --> GATEWAY
+    GATEWAY --> RATE
+    
+    GATEWAY --> AUTH
+    GATEWAY --> PRODUCT
+    GATEWAY --> CART
+    GATEWAY --> ORDER
+    
+    AUTH --> MONGO
+    AUTH --> REDIS
+    
+    PRODUCT --> MONGO
+    PRODUCT --> REDIS
+    PRODUCT --> ELASTIC
+    PRODUCT --> S3
+    
+    CART --> REDIS
+    CART --> INVENTORY
+    
+    INVENTORY --> MONGO
+    INVENTORY --> REDIS
+    
+    ORDER --> MONGO
+    ORDER --> QUEUE
+    ORDER --> PAYMENT
+    ORDER --> NOTIFICATION
+    ORDER --> DELIVERY
+    
+    PAYMENT --> MONGO
+    PAYMENT --> RAZORPAY
+    
+    NOTIFICATION --> QUEUE
+    NOTIFICATION --> SMS
+    NOTIFICATION --> EMAIL
+    
+    DELIVERY --> MONGO
+    DELIVERY --> MAPS
+    
+    %% Event flows
+    QUEUE --> AUTH
+    QUEUE --> PRODUCT
+    QUEUE --> CART
+    QUEUE --> INVENTORY
+    QUEUE --> ORDER
+    QUEUE --> PAYMENT
+    QUEUE --> NOTIFICATION
+    QUEUE --> DELIVERY
+
+    %% Styling
+    classDef frontend fill:#e1f5fe
+    classDef gateway fill:#f3e5f5
+    classDef microservice fill:#e8f5e8
+    classDef database fill:#fff3e0
+    classDef external fill:#fce4ec
+    classDef queue fill:#f1f8e9
+
+    class WEB,MOBILE,ADMIN frontend
+    class NGINX,GATEWAY,RATE gateway
+    class AUTH,PRODUCT,CART,INVENTORY,ORDER,PAYMENT,NOTIFICATION,DELIVERY microservice
+    class MONGO,REDIS,S3,ELASTIC database
+    class RAZORPAY,MAPS,SMS,EMAIL external
+    class QUEUE queue
