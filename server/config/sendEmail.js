@@ -1,31 +1,32 @@
-import { Resend } from 'resend';
-import dotenv from 'dotenv'
-dotenv.config()
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+dotenv.config();
 
-if(!process.env.RESEND_API){
-    console.log("Provide RESEND_API in side the .env file")
-}
+// Create reusable transporter
+const transporter = nodemailer.createTransport({
+    service: 'gmail', // You can change this if using another provider
+    auth: {
+        user: process.env.EMAIL_USER, // Your email
+        pass: process.env.EMAIL_PASS  // App password (NOT your real password)
+    }
+});
 
-const resend = new Resend(process.env.RESEND_API);
-
-const sendEmail = async({sendTo, subject, html })=>{
+// Send email function
+const sendEmail = async ({ sendTo, subject, html }) => {
     try {
-        const { data, error } = await resend.emails.send({
-            from: 'Binkeyit <noreply@amitprajapati.co.in>',
+        const mailOptions = {
+            from: `"Blinkit Clone" <${process.env.EMAIL_USER}>`,
             to: sendTo,
             subject: subject,
-            html: html,
-        });
+            html: html
+        };
 
-        if (error) {
-            return console.error({ error });
-        }
-
-        return data
+        let info = await transporter.sendMail(mailOptions);
+        console.log("Email sent: " + info.response);
+        return info;
     } catch (error) {
-        console.log(error)
+        console.error("Error sending email:", error);
     }
-}
+};
 
-export default sendEmail
-
+export default sendEmail;
