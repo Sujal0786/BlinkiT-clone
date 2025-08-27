@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import banner from '../assets/banner.jpg'
+import banner from '../assets/banner2.avif'
 import bannerMobile from '../assets/banner-mobile.jpg'
 import { useSelector } from 'react-redux'
 import { valideURLConvert } from '../utils/valideURLConvert'
