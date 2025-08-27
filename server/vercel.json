@@ -1,6 +1,6 @@
 {
     "version" : 2,
-    "name" : "your domain /site name",
+    "name" : "Blinkit-Food-Delivery-App",
     "builds" : [
         {
             "src" : "./index.js",

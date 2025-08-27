@@ -3,6 +3,7 @@ import CartProductModel from "../models/cartproduct.model.js";
 import OrderModel from "../models/order.model.js";
 import UserModel from "../models/user.model.js";
 import mongoose from "mongoose";
+import { assignDeliveryPartner } from "./deliveryPartner.controller.js";
 
  export async function CashOnDeliveryOrderController(request,response){
     try {
@@ -28,16 +29,33 @@ import mongoose from "mongoose";
 
         const generatedOrder = await OrderModel.insertMany(payload)
 
+        // Assign delivery partner for COD orders
+        const deliveryPartner = await assignDeliveryPartner()
+        
+        // Generate random ETA between 20-40 minutes
+        const etaMinutes = Math.floor(Math.random() * (40 - 20 + 1)) + 20
+
         ///remove from the cart
         const removeCartItems = await CartProductModel.deleteMany({ userId : userId })
         const updateInUser = await UserModel.updateOne({ _id : userId }, { shopping_cart : []})
 
-        return response.json({
-            message : "Order successfully",
+        const responseData = {
+            message : "Order placed successfully",
             error : false,
             success : true,
             data : generatedOrder
-        })
+        }
+
+        // Add delivery partner details if available
+        if (deliveryPartner) {
+            responseData.deliveryPartner = {
+                name: deliveryPartner.name,
+                phone: deliveryPartner.phone,
+                eta: `${etaMinutes} mins`
+            }
+        }
+
+        return response.json(responseData)
 
     } catch (error) {
         return response.status(500).json({

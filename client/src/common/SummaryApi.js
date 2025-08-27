@@ -152,6 +152,18 @@ const SummaryApi = {
     getOrderItems : {
         url : '/api/order/order-list',
         method : 'get'
+    },
+    registerDeliveryPartner : {
+        url : '/api/delivery-partner/register',
+        method : 'post'
+    },
+    getDeliveryPartners : {
+        url : '/api/delivery-partner',
+        method : 'get'
+    },
+    updateDeliveryPartnerStatus : {
+        url : '/api/delivery-partner/status',
+        method : 'put'
     }
 }
 

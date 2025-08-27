@@ -9,6 +9,7 @@ import SummaryApi from '../common/SummaryApi'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import { loadStripe } from '@stripe/stripe-js'
+import DeliveryPartnerModal from '../components/DeliveryPartnerModal'
 
 const CheckoutPage = () => {
   const { notDiscountTotalPrice, totalPrice, totalQty, fetchCartItem,fetchOrder } = useGlobalContext()
@@ -17,6 +18,9 @@ const CheckoutPage = () => {
   const [selectAddress, setSelectAddress] = useState(0)
   const cartItemsList = useSelector(state => state.cartItem.cart)
   const navigate = useNavigate()
+  const [showDeliveryPartnerModal, setShowDeliveryPartnerModal] = useState(false)
+  const [deliveryPartnerData, setDeliveryPartnerData] = useState(null)
+  const [currentOrderId, setCurrentOrderId] = useState(null)
 
   const handleCashOnDelivery = async() => {
       try {
@@ -33,18 +37,26 @@ const CheckoutPage = () => {
           const { data : responseData } = response
 
           if(responseData.success){
-              toast.success(responseData.message)
+              // Check if delivery partner was assigned
+              if(responseData.deliveryPartner) {
+                setDeliveryPartnerData(responseData.deliveryPartner)
+                setCurrentOrderId(responseData.data[0]?.orderId)
+                setShowDeliveryPartnerModal(true)
+              } else {
+                toast.success(responseData.message)
+                navigate('/success',{
+                  state : {
+                    text : "Order"
+                  }
+                })
+              }
+              
               if(fetchCartItem){
                 fetchCartItem()
               }
               if(fetchOrder){
                 fetchOrder()
               }
-              navigate('/success',{
-                state : {
-                  text : "Order"
-                }
-              })
           }
 
       } catch (error) {
@@ -152,6 +164,24 @@ const CheckoutPage = () => {
       {
         openAddress && (
           <AddAddress close={() => setOpenAddress(false)} />
+        )
+      }
+
+      {/* Delivery Partner Modal */}
+      {
+        showDeliveryPartnerModal && (
+          <DeliveryPartnerModal 
+            deliveryPartner={deliveryPartnerData}
+            orderId={currentOrderId}
+            close={() => {
+              setShowDeliveryPartnerModal(false)
+              navigate('/success', {
+                state: {
+                  text: "Order"
+                }
+              })
+            }}
+          />
         )
       }
     </section>
