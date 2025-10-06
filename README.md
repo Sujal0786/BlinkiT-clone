@@ -1,5 +1,6 @@
 # 🛒 BlinkIt Clone - Full Stack E-commerce Application
-
+<a href="https://blinki-t-clone-drdk.vercel.app/"><strong>➥ Live Demo</strong></a>
+<br>
 A complete MERN stack e-commerce application inspired by BlinkIt (formerly Grofers) - an online grocery delivery platform.
 
 ## 🚀 Features
